@@ -1,12 +1,9 @@
-name: CI Pipeline - IT System Modernization
+name: Release Build
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -16,9 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show commit message
-        run: echo "✅ Commit received from Jira integration project."
+      - name: Create release artifact
+        run: |
+          echo "Release package for IT System Modernization" > release_notes.txt
+          zip -r release_build.zip . -x "*.git*"
 
-      - name: List repository files
-        run: ls -la
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vabz-release
+          path: release_build.zip
 
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_build.zip
+          body: "🚀 Реліз системи цифровізації ІТ-відділу ПАТ «ВАБЗ» — автоматична збірка з GitHub Actions"
