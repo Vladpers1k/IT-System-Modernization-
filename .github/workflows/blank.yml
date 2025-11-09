@@ -1,0 +1,24 @@
+name: CI Pipeline - IT System Modernization
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show commit message
+        run: echo "✅ Commit received from Jira integration project."
+
+      - name: List repository files
+        run: ls -la
+
