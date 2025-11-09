@@ -1,0 +1,35 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "v*.*.*" # запуск при пуші тегів v1.0.0, v1.0.1 і т.д.
+  workflow_dispatch: # дозволяє запускати вручну
+
+permissions:
+  contents: write # обов’язково для створення релізу
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create release artifact
+        run: |
+          echo "🚀 Release package for IT System Modernization (ПАТ ВАБЗ)" > release_notes.txt
+          zip -r release_build.zip . -x "*.git*"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vabz-release
+          path: release_build.zip
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_build.zip
+          body: "Реліз системи цифровізації ІТ-відділу ПАТ «Вінницький асфальтобетонний завод». Автоматична збірка з GitHub Actions."
